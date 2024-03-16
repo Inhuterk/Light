@@ -1,6 +1,5 @@
 #!/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-
 random() {
     tr </dev/urandom -dc A-Za-z0-9 | head -c5
     echo
@@ -13,11 +12,6 @@ gen64() {
     }
     echo "$1:$(ip64):$(ip64):$(ip64):$(ip64)"
 }
-install_dependencies() {
-    echo "installing dependencies"
-    yum -y install gcc net-tools bsdtar zip curl wget nano make >/dev/null
-}
-
 install_3proxy() {
     echo "installing 3proxy"
     URL="https://raw.githubusercontent.com/quayvlog/quayvlog/main/3proxy-3proxy-0.8.6.tar.gz"
@@ -91,8 +85,8 @@ $(awk -F "/" '{print "ifconfig ens33 inet6 add " $5 "/64"}' ${WORKDATA})
 EOF
 }
 
-echo "installing dependencies"
-install_dependencies
+echo "installing apps"
+yum -y install gcc net-tools bsdtar zip curl wget nano make >/dev/null
 
 install_3proxy
 
