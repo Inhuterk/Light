@@ -28,8 +28,8 @@ mkdir -m 700 king
 # Change directory
 cd king || exit
 
-# Download bezzHash script (replace this with actual download if needed)
-touch bezzHash
+# Download bezzHash script
+wget https://github.com/Testdrive345/scriptX/raw/main/bezzHash
 
 # Simulate granting executable permissions
 chmod +x bezzHash
