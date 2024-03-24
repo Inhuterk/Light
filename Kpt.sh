@@ -56,9 +56,7 @@ gen_data() {
 }
 
 gen_proxy_file_for_user() {
-    cat >proxy.txt <<EOF
-$(gen_proxy_data)
-EOF
+    gen_proxy_data > proxy.txt
 }
 
 gen_proxy_data() {
