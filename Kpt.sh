@@ -1,5 +1,5 @@
 #!/bin/sh
-sleep 2
+sleep 1
 random() {
 	tr </dev/urandom -dc A-Za-z0-9 | head -c5
 	echo
