@@ -67,10 +67,11 @@ upload_proxy() {
 }
 
 gen_manual_data() {
-    echo "Please enter the username, password, and IP address for all proxies. Example format: username/password/IP"
+    echo "Please enter the username, password, IP address, and port for all proxies. Example format: username/password/IP/port"
     echo "Press Enter after entering all the details. When done, press Ctrl+D to continue."
     cat > ${WORKDIR}/manual_data.txt
 }
+
 
 gen_data() {
     seq $FIRST_PORT $LAST_PORT | while read port; do
