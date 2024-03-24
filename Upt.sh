@@ -50,8 +50,8 @@ EOF
 }
 
 gen_data() {
-    for ((i=0; i<$COUNT; i++)); do
-        echo "Ram:CL:Ram $IP4:$((FIRST_PORT+i))/$(gen64 $IP6)"
+    for ((i=$FIRST_PORT; i<=$LAST_PORT; i++)); do
+        echo "$IP4:$i:Ram:CL:Ram:$(gen64 $IP6)"
     done
 }
 
@@ -62,15 +62,15 @@ EOF
 }
 
 gen_proxy_data() {
-    for ((i=0; i<$COUNT; i++)); do
-        echo "Ram:Ram:$IP4:$((FIRST_PORT+i))"
+    for ((i=$FIRST_PORT; i<=$LAST_PORT; i++)); do
+        echo "$IP4:$i:Ram:Ram"
     done
 }
 
 upload_proxy() {
     local PASS=$(random)
     zip --password $PASS proxy.zip proxy.txt
-    echo "Proxy is ready! Format LOGIN:PASS:IP:PORT"
+    echo "Proxy is ready! Format IP:PORT:USER:PASS"
     echo "Password: ${PASS}"
 }
 
