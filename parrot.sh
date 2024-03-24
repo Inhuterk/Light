@@ -64,15 +64,17 @@ gen_data() {
 }
 
 gen_iptables() {
-    cat <<EOF
-    $(awk -F "/" '{print "ip6tables -I INPUT -p tcp --dport " $4 " -j ACCEPT"}' ${WORKDATA}) 
-EOF
+    while read line; do
+        port=$(echo $line | awk -F "/" '{print $4}')
+        ip6tables -I INPUT -p tcp --dport $port -j ACCEPT
+    done < ${WORKDATA}
 }
 
 gen_ifconfig() {
-    cat <<EOF
-$(awk -F "/" '{print "ifconfig eth0 inet6 add " $5 "/64"}' ${WORKDATA})
-EOF
+    while read line; do
+        ipv6=$(echo $line | awk -F "/" '{print $5}')
+        ifconfig eth0 inet6 add $ipv6/64
+    done < ${WORKDATA}
 }
 
 echo "installing apps"
