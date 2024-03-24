@@ -54,7 +54,9 @@ EOF
 }
 
 gen_proxy_file_for_user() {
-    awk -F "/" '{print $3 ":" $4}' ${WORKDATA} > proxy.txt
+    cat >proxy.txt <<EOF
+$(awk -F "/" '{print $3 ":" $4 ":" $1 ":" $2 }' ${WORKDATA})
+EOF
 }
 
 upload_proxy() {
@@ -66,7 +68,7 @@ upload_proxy() {
 
 gen_data() {
     seq $FIRST_PORT $LAST_PORT | while read port; do
-        echo "${IP4}:${port}"
+        echo "$IP4/$port/$(gen64 $IP6)"
     done
 }
 
