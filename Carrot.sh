@@ -1,7 +1,7 @@
 
 #!/bin/sh
 service network restart
-sleep 7
+sleep 6
 
 random() {
 	tr </dev/urandom -dc A-Za-z0-9 | head -c5
