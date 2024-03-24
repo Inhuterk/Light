@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 service network restart
 sleep 7
@@ -20,7 +20,7 @@ gen64() {
 install_3proxy() {
     echo "installing 3proxy"
     URL="https://github.com/z3APA3A/3proxy/archive/3proxy-0.8.6.tar.gz"
-    wget -qO- $URL | bsdtar -xvf-
+    wget -qO- $URL | tar -xzvf -
     cd 3proxy-3proxy-0.8.6
     make -f Makefile.Linux
     mkdir -p /usr/local/etc/3proxy/{bin,logs,stat}
@@ -63,8 +63,9 @@ gen_data() {
         echo "$IP4/$port $(gen64 $IP6)"
     done
 }
+
 gen_iptables() {
-    awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $2 " -state NEW -j ACCEPT"}' ${WORKDATA}
+    awk -F "/" '{print "ip6tables -I INPUT -p tcp --dport " $2 " -m state --state NEW -j ACCEPT"}' ${WORKDATA}
 }
 
 gen_ifconfig() {
