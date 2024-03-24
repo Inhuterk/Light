@@ -51,7 +51,7 @@ EOF
 
 gen_data() {
     for ((i=0; i<$COUNT; i++)); do
-        echo "Ram:CL:Ram $IP4/$((FIRST_PORT+i))/$(gen64 $IP6)"
+        echo "Ram:CL:Ram $IP4:$((FIRST_PORT+i))/$(gen64 $IP6)"
     done
 }
 
@@ -63,14 +63,14 @@ EOF
 
 gen_proxy_data() {
     for ((i=0; i<$COUNT; i++)); do
-        echo "$IP4:$((FIRST_PORT+i)):Ram:Ram"
+        echo "Ram:Ram:$IP4:$((FIRST_PORT+i))"
     done
 }
 
 upload_proxy() {
     local PASS=$(random)
     zip --password $PASS proxy.zip proxy.txt
-    echo "Proxy is ready! Format IP:PORT:LOGIN:PASS"
+    echo "Proxy is ready! Format LOGIN:PASS:IP:PORT"
     echo "Password: ${PASS}"
 }
 
@@ -96,8 +96,9 @@ echo "Internal ip = ${IP4}. External sub for ip6 = ${IP6}"
 read -p "How many proxies do you want to create? Example: 500 " COUNT
 
 FIRST_PORT=22000
+LAST_PORT=22099
 
-echo "Generating $COUNT proxies..."
+echo "Generating $COUNT proxies with ports ranging from $FIRST_PORT to $LAST_PORT..."
 
 gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
 
