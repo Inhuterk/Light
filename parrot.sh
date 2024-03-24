@@ -54,7 +54,7 @@ EOF
 }
 
 gen_proxy_file_for_user() {
-    awk -F "/" '{print $5 ":" $4}' ${WORKDATA} > proxy.txt
+    awk -F "/" '{print $3 ":" $4}' ${WORKDATA} > proxy.txt
 }
 
 upload_proxy() {
