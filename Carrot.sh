@@ -1,5 +1,5 @@
-
 #!/bin/sh
+
 service network restart
 sleep 7
 
@@ -60,11 +60,11 @@ EOF
 
 gen_data() {
     seq $FIRST_PORT $LAST_PORT | while read port; do
-        echo "$IP4/$port/$(gen64 $IP6)"
+        echo "$IP4/$port $(gen64 $IP6)"
     done
 }
 gen_iptables() {
-    awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 " -m state --state NEW -j ACCEPT"}' ${WORKDATA}
+    awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $2 " -state NEW -j ACCEPT"}' ${WORKDATA}
 }
 
 gen_ifconfig() {
