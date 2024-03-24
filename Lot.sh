@@ -42,8 +42,13 @@ setgid 65535
 setuid 65535
 stacksize 6291456 
 flush
+auth strong
 
-$(awk -F "/" '{print "proxy -6 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
+users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' "${WORKDATA}")
+
+$(awk -F "/" '{print "auth strong\n" \
+"allow " $1 "\n" \
+"proxy -6 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
 "flush\n"}' "${WORKDATA}")
 EOF
 }
@@ -61,21 +66,27 @@ upload_proxy() {
     echo "Password: ${PASS}"
 }
 
+gen_manual_data() {
+    echo "Please enter the username, password, and IP address for all proxies. Example format: username/password/IP"
+    echo "Press Enter after entering all the details. When done, press Ctrl+D to continue."
+    cat > ${WORKDIR}/manual_data.txt
+}
+
 gen_data() {
     seq $FIRST_PORT $LAST_PORT | while read port; do
-        echo "$IP4/$port/$(gen64 $IP6)"
+        echo "usr$(random)/pass$(random)/$IP4/$port/$(gen64 $IP6)"
     done
 }
 
 gen_iptables() {
     cat <<EOF
-$(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $2 "  -m state --state NEW -j ACCEPT"}' ${WORKDATA}) 
+$(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT"}' ${WORKDATA}) 
 EOF
 }
 
 gen_ifconfig() {
     cat <<EOF
-$(awk -F "/" '{print "ifconfig eth0 inet6 add " $3 "/64"}' ${WORKDATA})
+$(awk -F "/" '{print "ifconfig eth0 inet6 add " $5 "/64"}' ${WORKDATA})
 EOF
 }
 
@@ -86,21 +97,18 @@ install_3proxy
 
 echo "working folder = /home/proxy-installer"
 WORKDIR="/home/proxy-installer"
-WORKDATA="${WORKDIR}/data.txt"
-mkdir $WORKDIR && cd $_
+WORKDATA="${WORKDIR}/manual_data.txt"  # Changed to manual_data.txt
 
-IP4=$(curl -4 -s icanhazip.com)
-IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
+echo "Internal IP = ${IP4}. External subnet for IPv6 = ${IP6}"
 
-echo "Internal ip = ${IP4}. External sub for ip6 = ${IP6}"
-
-echo "How many proxy do you want to create? Example 500"
+echo "How many proxies do you want to create? Example: 500"
 read COUNT
 
 FIRST_PORT=22000
 LAST_PORT=22099
 
-gen_data >$WORKDIR/data.txt
+gen_manual_data  # Call the function to input username, password, and IP once
+
 gen_iptables >$WORKDIR/boot_iptables.sh
 gen_ifconfig >$WORKDIR/boot_ifconfig.sh
 chmod +x ${WORKDIR}/boot_*.sh /etc/rc.local
