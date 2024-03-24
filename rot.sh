@@ -52,11 +52,8 @@ EOF
 }
 
 gen_proxy_file_for_user() {
-    cat >proxy.txt <<EOF
-$(awk -F "/" '{print $3 ":" $4 ":" $1 ":" $2 }' ${WORKDATA})
-EOF
+    awk -F "/" '{print $3 ":" $4 ":" $1 ":" $2 }' ${WORKDATA} > proxy.txt
 }
-
 
 gen_data() {
     seq $FIRST_PORT $LAST_PORT | while read port; do
@@ -65,11 +62,11 @@ gen_data() {
 }
 
 gen_iptables() {
-    awk -F "/" '{print "ip6tables -I INPUT -p tcp --dport " $2 " -m state --state NEW -j ACCEPT"}' ${WORKDATA}
+    awk -F "/" '{print "ip6tables -I INPUT -p tcp --dport " $2 " -m state --state NEW -j ACCEPT"}' ${WORKDATA} > boot_iptables.sh
 }
 
 gen_ifconfig() {
-    awk -F "/" '{print "ifconfig eth0 inet6 add " $3 "/64"}' ${WORKDATA}
+    awk -F "/" '{print "ifconfig eth0 inet6 add " $3 "/64"}' ${WORKDATA} > boot_ifconfig.sh
 }
 
 echo "installing apps"
@@ -93,9 +90,10 @@ read COUNT
 FIRST_PORT=22000
 LAST_PORT=22099
 
-gen_data >$WORKDIR/data.txt
-gen_iptables >$WORKDIR/boot_iptables.sh
-gen_ifconfig >$WORKDIR/boot_ifconfig.sh
+gen_data
+gen_iptables
+gen_ifconfig
+
 chmod +x ${WORKDIR}/boot_*.sh /etc/rc.local
 
 gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
