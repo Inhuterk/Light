@@ -54,29 +54,18 @@ $(awk -F "/" '{print $3 ":" $4 ":" $1 ":" $2 }' ${WORKDATA})
 EOF
 }
 
-upload_proxy() {
-    local PASS=$(random)
-    zip --password $PASS proxy.zip proxy.txt
-    echo "Proxy is ready! Format IP:PORT:LOGIN:PASS"
-    echo "Password: ${PASS}"
-}
-
 gen_data() {
-    seq $FIRST_PORT $LAST_PORT | while read port; do
+    for port in $(seq $FIRST_PORT $LAST_PORT); do
         echo "${IP4}:${port}"
     done
 }
 
 gen_iptables() {
-    cat <<EOF
-$(awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $2 "  -m state --state NEW -j ACCEPT"}' ${WORKDATA}) 
-EOF
+    awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $2 " -m state --state NEW -j ACCEPT"}' ${WORKDATA}
 }
 
 gen_ifconfig() {
-    cat <<EOF
-$(awk -F "/" '{print "ifconfig eth0 inet6 add " $3 "/64"}' ${WORKDATA})
-EOF
+    awk -F "/" '{print "ifconfig eth0 inet6 add " $3 "/64"}' ${WORKDATA}
 }
 
 echo "installing apps"
@@ -117,5 +106,3 @@ EOF
 bash /etc/rc.local
 
 gen_proxy_file_for_user
-
-upload_proxy
