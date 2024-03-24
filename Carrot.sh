@@ -59,7 +59,7 @@ EOF
 
 gen_data() {
     for port in $(seq $FIRST_PORT $LAST_PORT); do
-        echo "${IP4:port}$(gen64 $IP6 $IP64)"
+        echo "IP4/port/$(gen64 $IP6)"
     done
 }
 
