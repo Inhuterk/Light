@@ -98,12 +98,14 @@ read COUNT
 FIRST_PORT=22000
 LAST_PORT=22099
 
-gen_data > $WORKDIR/data.txt
-gen_iptables > $WORKDIR/boot_iptables.sh
-gen_ifconfig > $WORKDIR/boot_ifconfig.sh
-chmod +x ${WORKDIR}/boot_*.sh /etc/rc.local
+echo "Generating data for $COUNT proxies..."
 
-gen_3proxy > /usr/local/etc/3proxy/3proxy.cfg
+gen_data > $WORKDIR/data.txt || { echo "Error: Failed to generate data"; exit 1; }
+gen_iptables > $WORKDIR/boot_iptables.sh || { echo "Error: Failed to generate iptables rules"; exit 1; }
+gen_ifconfig > $WORKDIR/boot_ifconfig.sh || { echo "Error: Failed to generate ifconfig commands"; exit 1; }
+chmod +x ${WORKDIR}/boot_*.sh /etc/rc.local || { echo "Error: Failed to chmod scripts"; exit 1; }
+
+gen_3proxy > /usr/local/etc/3proxy/3proxy.cfg || { echo "Error: Failed to generate 3proxy config"; exit 1; }
 
 cat >> /etc/rc.local <<EOF
 bash ${WORKDIR}/boot_iptables.sh
@@ -112,7 +114,7 @@ ulimit -n 10048
 systemctl start 3proxy
 EOF
 
-bash /etc/rc.local
+bash /etc/rc.local || { echo "Error: Failed to execute /etc/rc.local"; exit 1; }
 
 gen_proxy_file_for_user
 
