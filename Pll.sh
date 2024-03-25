@@ -9,21 +9,21 @@ gen64() {
     ip64() {
         printf "%04x:%04x:%04x:%04x" $((RANDOM % 65536)) $((RANDOM % 65536)) $((RANDOM % 65536)) $((RANDOM % 65536))
     }
-    echo "$(ip64):$(ip64):$(ip64):$(ip64)"
+    echo "$1:$(ip64):$(ip64):$(ip64):$(ip64)"
 }
 
 install_3proxy() {
     echo "installing 3proxy"
     URL="https://github.com/z3APA3A/3proxy/archive/3proxy-0.8.6.tar.gz"
     wget -qO- $URL | bsdtar -xvf-
-    cd 3proxy-3proxy-0.8.6 || exit
-    make -f Makefile.Linux
-    mkdir -p /usr/local/etc/3proxy/{bin,logs,stat}
-    cp src/3proxy /usr/local/etc/3proxy/bin/
-    cp ./scripts/rc.d/proxy.sh /etc/init.d/3proxy
-    chmod +x /etc/init.d/3proxy
-    chkconfig 3proxy on
-    cd $WORKDIR || exit
+    cd 3proxy-3proxy-0.8.6 || { echo "Error: Failed to change directory to 3proxy-3proxy-0.8.6"; exit 1; }
+    make -f Makefile.Linux || { echo "Error: Make failed"; exit 1; }
+    mkdir -p /usr/local/etc/3proxy/{bin,logs,stat} || { echo "Error: Failed to create directory /usr/local/etc/3proxy/{bin,logs,stat}"; exit 1; }
+    cp src/3proxy /usr/local/etc/3proxy/bin/ || { echo "Error: Failed to copy 3proxy binary"; exit 1; }
+    cp ./scripts/rc.d/proxy.sh /etc/init.d/3proxy || { echo "Error: Failed to copy proxy.sh script"; exit 1; }
+    chmod +x /etc/init.d/3proxy || { echo "Error: Failed to chmod proxy.sh"; exit 1; }
+    chkconfig 3proxy on || { echo "Error: Failed to enable 3proxy"; exit 1; }
+    cd $WORKDIR || { echo "Error: Failed to change directory to $WORKDIR"; exit 1; }
 }
 
 gen_3proxy() {
@@ -73,14 +73,19 @@ gen_ifconfig() {
 }
 
 echo "installing apps"
-yum -y install gcc net-tools bsdtar zip >/dev/null || exit
+yum -y install gcc net-tools bsdtar zip >/dev/null || { echo "Error: Failed to install dependencies"; exit 1; }
 
 install_3proxy
 
 echo "working folder = /home/proxy-installer"
 WORKDIR="/home/proxy-installer"
-WORKDATA="${WORKDIR}/data.txt"
-mkdir $WORKDIR && cd $_ || exit
+
+# Check if the directory already exists
+if [ ! -d "$WORKDIR" ]; then
+    mkdir $WORKDIR || { echo "Error: Failed to create directory $WORKDIR"; exit 1; }
+fi
+
+cd $WORKDIR || { echo "Error: Failed to change directory to $WORKDIR"; exit 1; }
 
 IP4=$(curl -4 -s icanhazip.com)
 IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
