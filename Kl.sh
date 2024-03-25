@@ -1,4 +1,5 @@
 #!/bin/bash
+
 random() {
     tr </dev/urandom -dc A-Za-z0-9 | head -c5
     echo
@@ -71,7 +72,7 @@ gen_data() {
 }
 
 gen_iptables() {
-    awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $6 " -m state --state NEW -j ACCEPT"}' "${WORKDATA}" > boot_iptables.sh
+    awk -F "/" '{print "echo iptables -I INPUT -p tcp --dport " $3 " -m state --state NEW -j ACCEPT"}' "${WORKDATA}" > boot_iptables.sh
 }
 
 gen_ifconfig() {
