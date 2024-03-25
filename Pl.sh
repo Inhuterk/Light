@@ -5,27 +5,25 @@ random() {
     echo
 }
 
-array=(1 2 3 4 5 6 7 8 9 0 a b c d e f)
-
 gen64() {
     ip64() {
-        echo "${array[$RANDOM % 16]}${array[$RANDOM % 16]}${array[$RANDOM % 16]}${array[$RANDOM % 16]}"
+        printf "%04x:%04x:%04x:%04x" $((RANDOM % 65536)) $((RANDOM % 65536)) $((RANDOM % 65536)) $((RANDOM % 65536))
     }
-    echo "$1:$(ip64):$(ip64):$(ip64):$(ip64)"
+    echo "$(ip64):$(ip64):$(ip64):$(ip64)"
 }
 
 install_3proxy() {
     echo "installing 3proxy"
     URL="https://github.com/z3APA3A/3proxy/archive/3proxy-0.8.6.tar.gz"
     wget -qO- $URL | bsdtar -xvf-
-    cd 3proxy-3proxy-0.8.6
+    cd 3proxy-3proxy-0.8.6 || exit
     make -f Makefile.Linux
     mkdir -p /usr/local/etc/3proxy/{bin,logs,stat}
     cp src/3proxy /usr/local/etc/3proxy/bin/
     cp ./scripts/rc.d/proxy.sh /etc/init.d/3proxy
     chmod +x /etc/init.d/3proxy
     chkconfig 3proxy on
-    cd $WORKDIR
+    cd $WORKDIR || exit
 }
 
 gen_3proxy() {
@@ -40,17 +38,17 @@ nscache 65536
 timeouts 1 5 30 60 180 1800 15 60
 setgid 65535
 setuid 65535
-stacksize 6291456 
+stacksize 6291456
 flush
 
 $(awk -F "/" '{print "allow " $1 "\n" \
-"proxy -6 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
+"proxy -6 -n -a -p " $4 " -i " $3 " -e "$5"\n" \
 "flush\n"}' "${WORKDATA}")
 EOF
 }
 
 gen_proxy_file_for_user() {
-    awk -F "/" '{print $3 ":" $4 }' ${WORKDATA} > proxy.txt
+    awk -F "/" '{print $3 ":" $4 }' "${WORKDATA}" > proxy.txt
 }
 
 upload_proxy() {
@@ -62,27 +60,27 @@ upload_proxy() {
 
 gen_data() {
     seq $FIRST_PORT $LAST_PORT | while read port; do
-        echo "$IP4:$port"
+        echo "$IP4:$port/$(gen64 $IP6)"
     done
 }
 
 gen_iptables() {
-    awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $4 "  -m state --state NEW -j ACCEPT"}' ${WORKDATA}
+    awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $5 " -m state --state NEW -j ACCEPT"}' "${WORKDATA}"
 }
 
 gen_ifconfig() {
-    awk -F "/" '{print "ifconfig eth0 inet6 add " $5 "/64"}' ${WORKDATA}
+    awk -F "/" '{print "ifconfig eth0 inet6 add " $6 "/64"}' "${WORKDATA}"
 }
 
 echo "installing apps"
-yum -y install gcc net-tools bsdtar zip >/dev/null
+yum -y install gcc net-tools bsdtar zip >/dev/null || exit
 
 install_3proxy
 
 echo "working folder = /home/proxy-installer"
 WORKDIR="/home/proxy-installer"
 WORKDATA="${WORKDIR}/data.txt"
-mkdir $WORKDIR && cd $_
+mkdir $WORKDIR && cd $_ || exit
 
 IP4=$(curl -4 -s icanhazip.com)
 IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
