@@ -54,7 +54,11 @@ EOF
 }
 
 gen_proxy_file_for_user() {
+    echo "Debug: Contents of WORKDATA"
+    cat "${WORKDATA}"
     awk -F "/" '{print $3 ":" $4 ":" $1 ":" $2 }' "${WORKDATA}" > proxy.txt
+    echo "Debug: Contents of proxy.txt"
+    cat proxy.txt
 }
 
 upload_proxy() {
@@ -72,7 +76,7 @@ gen_data() {
 }
 
 gen_iptables() {
-    awk -F "/" '{print "echo iptables -I INPUT -p tcp --dport " $3 " -m state --state NEW -j ACCEPT"}' "${WORKDATA}" > boot_iptables.sh
+    awk -F "/" '{print "iptables -I INPUT -p tcp --dport " $3 " -m state --state NEW -j ACCEPT"}' "${WORKDATA}" > boot_iptables.sh
 }
 
 gen_ifconfig() {
@@ -118,4 +122,3 @@ bash /etc/rc.local
 
 gen_proxy_file_for_user
 
-upload_proxy
